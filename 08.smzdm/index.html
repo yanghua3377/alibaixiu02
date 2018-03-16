@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>SMZDM</title>
+	<style>
+		.items {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.item {
+			/*float: left;*/
+			width: 320px;
+			/*height: 320px;*/
+			border: 1px solid #0094ff;
+			overflow: hidden;
+			margin: 10px 20px;
+		}
+
+		.item .title {
+			display: block;
+			width: 100%;
+			position: relative;
+		}
+
+		.title img {
+			display: block;
+			width: 100%;
+		}
+
+		.title span {
+			position: absolute;
+			right: 20px;
+			bottom: 0px;
+			width: 50px;
+			text-align: center;
+			background-color: lightgray;
+			color: gray;
+			font-size: 13px;
+			border-radius: 5px 5px 0 0;
+		}
+
+		.content {
+			padding: 10px 0;
+		}
+
+		.content a {
+			text-decoration: none;
+			color: black;
+			font-family: "微软雅黑";
+			font-size: 16px;
+		}
+
+		.content p {
+			color: gray;
+			font-size: 13px;
+			font-family: "微软雅黑";
+			margin-bottom: 0;
+		}
+
+		.f_l {
+			float: left;
+		}
+
+		.f_r {
+			float: right;
+		}
+
+		.clearfix::before,
+		.clearfix::after {
+			content: '';
+			display: block;
+			line-height: 0;
+			height: 0;
+			clear: both;
+			visibility: hidden;
+		}
+
+		.clearfix {
+			zoom: 1;
+		}
+
+		.info {
+			line-height: 25px;
+		}
+
+		.info img {
+			width: 20px;
+			height: 20px;
+			vertical-align: middle;
+			margin-right: 10px;
+		}
+
+		.info a {
+			color: gray;
+			text-decoration: none;
+			font-size: 12px;
+			height: 20px;
+			line-height: 20px;
+			margin: 0 10px;
+		}
+
+		.getMore {
+			width: 100px;
+			height: 100px;
+			border: none;
+			text-align: center;
+			background-color: hotpink;
+			line-height: 100px;
+			cursor: pointer;
+			font-size: 20px;
+			font-weight: 900;
+		}
+
+		.getSome {
+			width: 100px;
+			height: 100px;
+			border: none;
+			text-align: center;
+			line-height: 100px;
+			cursor: pointer;
+			background-color: yellowgreen;
+			font-size: 20px;
+			font-weight: 900;
+		}
+
+		.controls {
+			display: flex;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="controls">
+		<div class="getSome">获取多条
+		</div>
+	</div>
+	<!--容器-->
+	<div class="items">
+
+	</div>
+</body>
+
+</html>
+<!-- 定义模板 挖坑 起名字 -->
+<script id='smzdm' type="text/html">
+	{{each items}}
+		<div class="item clearfix">
+			<a href="{{$value.article_url}}" class="title">
+					<img src="{{$value.article_img_url}}" alt="">
+					<span>{{$value.article_date}}</span>
+				</a>
+			<div class="content">
+				<a href="#">{{$value.article_title}}</a>
+				<p>{{@$value.article_content}}</p>
+			</div>
+			<div class="info clearfix">
+				<a href="#" class="f_l"><img src="imgs/icon02.jpg" alt="">liz82</a>
+				<a href="#" class="f_r">信息:2</a>
+				<a href="#" class="f_r">❤:2</a>
+				<a href="#" class="f_r">赞:2</a>
+			</div>
+		</div>
+	{{/each}}
+</script>
+
+<!--  导入 jQuery  -->
+<script src="./js/jquery-1.12.4.min.js"></script>
+<script src="./js/template-web.js"></script>
+<script>
+	$(function(){
+		$('.getSome').click(function(){
+			$.get({
+				url:'./_api/smzdm_getSome.php',
+				data:{
+					num:10
+				},
+				success:function(backData){
+					console.log(backData);
+					$('.items').append(template('smzdm',backData));
+				}
+			})
+		})
+	})
+</script>
+

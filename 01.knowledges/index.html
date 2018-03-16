@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="button" value="get请求" class="get">
+    <input type="button" value="post请求" class="post">
+    <input type="button" value="获取XML" class="xml">
+    <input type="button" value="获取JSON" class="json">
+</body>
+
+</html>
+<script>
+    document.querySelector('.get').onclick = function () {
+        // 创建对象
+        var ajax = new XMLHttpRequest();
+        // 设置请求行
+        ajax.open('get', '../00.backData/01.backSendData.php?name=jack&skill=画画');
+        // 设置请求头
+        // 设置回调函数
+        ajax.onload = function () {
+            console.log(ajax.responseText);
+        }
+        // 设置请求主体
+        ajax.send(null);
+    }
+    document.querySelector('.post').onclick = function () {
+        // 创建对象
+        var ajax = new XMLHttpRequest();
+        // 设置请求行
+        ajax.open('post', '../00.backData/01.backSendData.php');
+        // 设置请求头
+        // 如果不设置 发送不了的
+        ajax.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        // 设置回调函数
+        ajax.onload = function () {
+            console.log(ajax.responseText);
+        }
+        // 设置请求主体
+        ajax.send('name=rose&skill=躺着被画');
+    }
+
+    document.querySelector('.xml').onclick = function () {
+        // 创建对象
+        var ajax = new XMLHttpRequest();
+        // 设置请求行
+        ajax.open('get', '../00.backData/02.backXML.php');
+        // 设置请求头
+        // 设置回调函数
+        ajax.onload = function () {
+            console.log(ajax.responseText);
+            console.log(ajax.responseXML);
+        }
+        // 设置请求主体
+        ajax.send(null);
+    }
+    document.querySelector('.json').onclick = function () {
+        // 创建对象
+        var ajax = new XMLHttpRequest();
+        // 设置请求行
+        ajax.open('get', '../00.backData/03.backJSON.php');
+        // 设置请求头
+        // 设置回调函数
+        ajax.onload = function () {
+            console.log(JSON.parse(ajax.responseText));
+        }
+        // 设置请求主体
+        ajax.send(null);
+    }
+</script>

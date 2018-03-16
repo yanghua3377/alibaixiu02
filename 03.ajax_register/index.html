@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
+
+<head>
+    <title>注册用户</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="./css/init.css" />
+    <link rel="stylesheet" type="text/css" href="./css/register.css" />
+    <style>
+        .sub.disabled {
+            /* background-color: gray !important; */
+            background: gray !important;
+            cursor: not-allowed !important;
+        }
+
+        .cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/loading.gif') no-repeat center, gray;
+            opacity: .7;
+            display: none;
+        }
+
+        .tips {
+            position: absolute;
+            font-size: 20px;
+            color: red;
+            transform: translateY(-10px);
+            /* display: none; */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="bg">
+        <img src="./Images/wallpaper.jpg" />
+    </div>
+    <div id="register">
+        <div class="logo">
+            <a href="./index.html"></a>
+        </div>
+        <div class="box">
+            <div class="regform">
+                <h2>工具函数实现版本</h2>
+                <form action="" method="post">
+                    <table>
+                        <tr>
+                            <td>用户名:</td>
+                            <td>
+                                <input class='inputName' type="text" name="" value="" />
+                            </td>
+                            <td>
+                                <span class='tips' style="display:none;">占位文本</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" align="center">
+                                <input type="button" class="sub disabled" value="注 册" />
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="quickreg">
+                <h2>快速注册</h2>
+                <div class="apps">
+                    <a class="qq" href="javascript:void(0)"></a>
+                    <a class="sina" href="javascript:void(0)"></a>
+                    <a class="taobao" href="javascript:void(0)"></a>
+                    <a class="tent" href="javascript:void(0)"></a>
+                    <a class="douban" href="javascript:void(0)"></a>
+                </div>
+                <div class="nowlog">
+                    <a href="./login.html">已有账号，现在去登陆！</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 底部 -->
+    <div id="footer">
+        <div class="copy">
+            <p>网站开发测试中...</p>
+            <p>版权所有 爱旅行 www.ailvxing.cc</p>
+        </div>
+    </div>
+    <div class="cover"></div>
+</body>
+
+</html>
+<!--  调用 工具函数  -->
+<!--  自己的工具函数 ajax不用再去手写了,直接调用函数即可 -->
+<!-- <script src="./js/ajax.js"></script> -->
+<script src="./js/ajax_tool.js"></script>
+<!-- jQuery 操纵dom元素 不需要考虑兼容性问题 -->
+<script src="./js/jquery-1.12.4.min.js"></script>
+<script>
+    /*
+        需求1 验证用户名是否存在
+            失去焦点之后 .inputName
+            弹出了一个遮挡的元素 .cover
+                ajax去服务器验证是否可用 ajax(option)
+                回调函数 success
+                    关闭遮挡的元素 .cover
+                    把服务器返回的信息 提示用户.tips
+                    判断验证的结果 如果可以使用 就启用按钮
+                    .sub  移除.disabled
+        需求2 注册验证成功的用户
+            点击事件 .sub
+            弹出了一个遮挡的元素 .cover
+                ajax去服务器验证是否可用 ajax(option)
+                回调函数 success
+                    关闭遮挡的元素 .cover
+                    把服务器返回的信息 提示用户.tips
+                    .sub  增加.disabled
+        jQ易错点
+            $('input');
+            $('.class');
+            $('#id');
+
+            绑定事件
+            $('.inputName').blur(function(){})
+    */
+    $(function () {
+        $('.inputName').blur(function () {
+            // 弹框
+            $('.cover').show();
+            // 获取输入的值
+            var inputValue = $(this).val();
+            // 发送ajax请求
+            ajax({
+                url: '_api/01.check.php',
+                type: 'get',
+                data: 'name=' + inputValue,
+                success: function (backData) {
+                    // 回调函数
+                    // console.log(backData);
+                    var data = JSON.parse(backData);
+                    console.log(data);
+                    // 关闭遮挡的元素 .cover
+                    $('.cover').hide();
+                    // 把服务器返回的信息 提示用户.tips
+                    $('.tips').html(data.message).fadeIn(2000).fadeOut(2000);
+                    // 判断验证的结果 如果可以使用 就启用按钮
+                    // .sub  移除.disabled
+                    if (data.status == 'can') {
+                        $('.sub').removeClass('disabled');
+                    } else {
+                        $('.sub').addClass('disabled');
+                    }
+                }
+            })
+        })
+
+        // 用户注册 需求2
+        $('.sub').click(function () {
+            // 什么时候不能点 有disabled这个类名时 不能点
+            if($(this).hasClass('disabled')){
+                alert('你再点,我弄死你!!!');
+                // 有 不能点 直接return即可
+                return;
+            }
+            // 什么时候可以点
+            // 获取 inputName的value值
+            var inputValue = $('.inputName').val();
+            // 弹出了一个遮挡的元素 .cover
+            $('.cover').show();
+            //         ajax去服务器验证是否可用 ajax(option)
+            ajax({
+                url: '_api/register.php',
+                type: 'post',
+                data: 'name=' + inputValue,
+                success: function (backData) {
+                    console.log(backData);
+                    //         回调函数 success
+                    //             关闭遮挡的元素 .cover
+                    $('.cover').hide();
+                    //             把服务器返回的信息 提示用户.tips
+                    $('.tips').html(backData).fadeIn().fadeOut();
+                    //             .sub  增加.disabled
+                    $('.sub').addClass('disabled');
+                }
+            })
+
+        })
+    })
+</script>

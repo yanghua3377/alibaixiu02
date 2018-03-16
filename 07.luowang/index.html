@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>落网</title>
+
+	<style type="text/css">
+		.item {
+			width: 640px;
+			/* height: 452px; */
+			background-color: #eee;
+			margin-top: 50px;
+			border-radius: 5px;
+			overflow: hidden;
+		}
+
+		.item .cover {
+			display: block;
+		}
+
+		.item .cover img {
+			display: block;
+		}
+
+		.item .bottom {
+			height: 35px;
+			position: relative;
+		}
+
+		.item .bottom a {
+			text-decoration: none;
+			line-height: 35px;
+			font-family: '微软雅黑';
+			margin-left: 20px;
+			color: gray;
+		}
+
+		.item .bottom .rightBox {
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			height: 100%;
+		}
+
+		.item .bottom .rightBox span {
+			line-height: 35px;
+			margin: 0 20px;
+			font-size: 15px;
+			/* font-family: "微软雅黑"; */
+			color: gray;
+		}
+
+		.item .bottom .rightBox span::before {
+			margin-right: 10px;
+			color: #dd5a64;
+		}
+
+		.left-control {
+			position: fixed;
+			right: 100px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		#getMore {
+			width: 100px;
+			height: 100px;
+			border: none;
+			text-align: center;
+			line-height: 100px;
+			cursor: pointer;
+		}
+
+		#getSome {
+			width: 100px;
+			height: 100px;
+			border: none;
+			text-align: center;
+			line-height: 100px;
+			cursor: pointer;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+</head>
+
+<body>
+	<div class="left-control">
+		<h2>加载多张</h2>
+		<div id='getSome' class="icon-download icon-4x"></div>
+	</div>
+	<div class="container">
+		<div class="item" style="\">
+			<a href="#" class='cover'>
+				<img src="images/vol.859.jpg" alt="">
+			</a>
+			<div class="bottom">
+				<a href="#">vol.847 用一首歌来想象你</a>
+				<div class='rightBox'>
+					<span class='icon-heart'>18554</span>
+					<span class='icon-comment'>292</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
+
+<!-- ajax获取数据 -->
+<script src="./js/jquery-1.12.4.min.js"></script>
+<script>
+	/*
+				需求1
+					点击 加载更多 #getSome
+						加载更多 ->loading h2
+					无刷新获取数据 ajax
+						回调函数
+						loading-->加载更多
+						解析数据
+						克隆页面中存在的那个dom元素
+						修改内容
+						添加到页面上
+			*/
+	$(function () {
+		$('#getSome').click(function () {
+			$(this).prev('h2').html('loading!!!!');
+			// ajax
+			$.ajax({
+				url: '_api/luowang_getSome.php',
+				type: 'get',
+				data: {
+					num: 8
+				},
+				success: function (backData) {
+					console.log(backData);
+					for (var i = 0; i < backData.items.length; i++) {
+						// 获取每一个 对象
+						var currentItem = backData.items[i];
+						// 克隆dom 
+						// js中 为了标记 jQuery对象 会加上$ 建议
+						var $cloneItem = $('.item').first().clone();
+						// console.log($cloneItem);
+						// 修改clone的dom元素的 属性
+						$cloneItem.find('img').attr('src',currentItem.path);
+						$cloneItem.find('.bottom a').html(currentItem.name);
+
+						// 添加到页面上
+						$('.container').append($cloneItem);
+					}
+				},
+				/*
+					实际工作中 服务器 如果返回的是 json格式 一般会在服务器设置好
+					jQ获取到那个信息之后 会自动帮我们进行转化
+					所以一般不需要设置dataType
+					如果碰到了 后台没有设置这个属性
+						找后台帮我们增加这个即可
+					当后台设置了 那个属性之后 我们就不需要设置 dataType了
+				*/
+				dataType: 'json'
+
+			})
+		})
+	})
+</script>
